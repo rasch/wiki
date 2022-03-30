@@ -247,6 +247,95 @@ gpg --import /path/to/subkey.asc
 gpg --import-ownertrust /path/to/otrust.txt
 ```
 
+### Set Up SSH Authentication
+
+To configure SSH authentication to use the gpg-agent instead of the
+ssh-agent, add the following to your shell environment:
+
+```sh
+# ~/.bashrc
+# -----------------------------------------------------
+
+unset SSH_AGENT_PID
+
+SSH_AUTH_SOCK="$(gpgconf --list-dirs agent-ssh-socket)"
+export SSH_AUTH_SOCK
+
+GPG_TTY="$(tty)"
+export GPG_TTY
+
+gpg-connect-agent updatestartuptty /bye >/dev/null 2>&1
+```
+
+**NOTE**: Different systems may need different configuration than shown
+above. I've had success using this setup on Arch Linux and Alpine Linux.
+Check out the [Arch Linux GnuPG SSH agent wiki page][ssh-agent] for more
+details.
+
+To enable the authentication key that we created above, we need to add
+the key's keygrip to `~/.gnupg/sshcontrol`.
+
+```sh
+export GRP="$(gpg --list-secret-keys --with-colons --with-fingerprint "$FPR" | \
+  grep -A 2 '\(.*:\)\{11\}a:' | grep '^grp' | cut -f 10 -d :)"
+
+echo "$GRP" >> "$HOME"/.gnupg/sshcontrol
+```
+
+The public SSH key can be retrieved by running:
+
+```sh
+gpg --export-ssh-key "$FPR"
+
+# or even better, copy it to the clipboard
+gpg --export-ssh-key "$FPR" | xclip
+```
+
+Add this key anywhere that you typically connect to with SSH, such as:
+
+- Code Repositories (GitHub, GitLab, Codeberg, Sourcehut, etc)
+- Media Center (Kodi)
+- Routers (OpenWRT)
+- Remote Servers
+
+### Signing Git Commits/Tags
+
+Copy the public key to the clipboard and add it to remote code
+repositories for signature verification.
+
+```sh
+gpg --export --armor "$FPR" | xclip
+```
+
+Now commits can be signed by using `git commit -S` or always require GPG
+signatures by setting the option in Git configuration:
+
+```sh
+git config --global commit.gpgSign true
+```
+
+### Use Web Key Directory (WKD) for Key Distribution.
+
+If the email address attached to the keys uses a personal domain, then
+our personal site can self host the key distribution. The following commands
+should be run in the root directory of the website.
+
+```sh
+WKD="$(gpg --list-keys --with-wkd-hash "$FPR" | grep -oE '[a-z0-f]{32}')"
+export WKD
+
+mkdir -p .well-known/openpgpkey/hu
+touch .well-known/openpgpkey/policy
+gpg --export --armor --output .well-known/openpgpkey/hu/"$WKD" "$FPR"
+```
+
+If using Netlify for hosting, then run the following to configure the
+required headers.
+
+```sh
+printf './well-known/openpgpkey/hu/%s\n  Access-Control-Allow-Origin: *' "$WKD"
+```
+
 ## References
 
 - <https://github.com/lfit/itpol/blob/master/protecting-code-integrity.md>
@@ -263,3 +352,4 @@ gpg --import-ownertrust /path/to/otrust.txt
 [gnupg]: https://gnupg.org
 [luks-tails]: https://tails.boum.org/doc/encryption_and_privacy/encrypted_volumes/index.en.html
 [luks-encryption]: luks-encryption.md
+[ssh-agent]: https://wiki.archlinux.org/title/GnuPG#SSH_agent
