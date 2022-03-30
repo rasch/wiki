@@ -336,6 +336,23 @@ required headers.
 printf './well-known/openpgpkey/hu/%s\n  Access-Control-Allow-Origin: *' "$WKD"
 ```
 
+## Key Maintenance
+
+### Extend Expiration Date
+
+1. Log into Tails OS.
+2. Decrypt and mount the USB drive that contains the private
+   certification key.
+3. Import the keys: `gpg --import /<path/to>/prvkey.asc`.
+4. Edit the key's expiration date: `gpg --quick-set-expire "$FPR" 1y`.
+   Change `1y` to an actual date, such as `2025-01-01` if preferred.
+5. Export the public key `gpg --armor --export --output pubkey.asc "$FPR"`.
+6. Move the `pubkey.asc` file to the "daily use subkeys" USB drive.
+7. Replace the public keys everywhere with the new `pubkey.asc`.
+
+**NOTE**: There is no need to update the backups of the private keys.
+The signature of the expiration date is attached to the public key.
+
 ## References
 
 - <https://github.com/lfit/itpol/blob/master/protecting-code-integrity.md>
