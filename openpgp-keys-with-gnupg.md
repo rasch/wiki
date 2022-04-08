@@ -263,8 +263,16 @@ export SSH_AUTH_SOCK
 
 GPG_TTY="$(tty)"
 export GPG_TTY
+```
 
-gpg-connect-agent updatestartuptty /bye >/dev/null 2>&1
+Add the following to the SSH configuration to ensure the GPG agent uses
+the proper tty for authenticating SSH commands:
+
+```
+# ~/.ssh/config
+# -----------------------------------------------------
+
+Match host * exec "gpg-connect-agent UPDATESTARTUPTTY /bye"
 ```
 
 **NOTE**: Different systems may need different configuration than shown
