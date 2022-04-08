@@ -66,8 +66,9 @@ It may be useful to export this fingerprint as an environment variable
 for use in upcoming steps.
 
 ```sh
-export FPR="$(gpg --list-secret-keys --with-colons --with-fingerprint "$GIT_COMMITTER_NAME <$EMAIL>" | \
+FPR="$(gpg --list-secret-keys --with-colons --with-fingerprint "$GIT_COMMITTER_NAME <$EMAIL>" | \
   grep -A 2 '^sec' | grep '^fpr' | cut -f 10 -d :)"
+export FPR
 ```
 
 To generate subkeys for encryption, authentication and signing:
@@ -113,8 +114,9 @@ encrypted with it will be useless.
 Set environment variable to store the encryption key fingerprint:
 
 ```sh
-export ENCR="$(gpg --list-secret-keys --with-colons --with-fingerprint "$FPR" | \
+ENCR="$(gpg --list-secret-keys --with-colons --with-fingerprint "$FPR" | \
   grep -A 2 '\(.*:\)\{11\}e:' | grep '^fpr' | cut -f 10 -d :)"
+export ENCR
 ```
 
 Export the private PGP encryption key:
@@ -284,8 +286,9 @@ To enable the authentication key that we created above, we need to add
 the key's keygrip to `~/.gnupg/sshcontrol`.
 
 ```sh
-export GRP="$(gpg --list-secret-keys --with-colons --with-fingerprint "$FPR" | \
+GRP="$(gpg --list-secret-keys --with-colons --with-fingerprint "$FPR" | \
   grep -A 2 '\(.*:\)\{11\}a:' | grep '^grp' | cut -f 10 -d :)"
+export GRP
 
 echo "$GRP" >> "$HOME"/.gnupg/sshcontrol
 ```
