@@ -14,7 +14,7 @@ Internet------+   +------------+      +----------+      +--------PC
                              +-+------+-+      +-+------+-+
                                |      |          |      |
                               WiFi   WiFi       WiFi   WiFi
-                             2.4GHz 5.0GHz     2.4GHz 5.0Ghz
+                             2.4GHz 5.0GHz     2.4GHz 5.0GHz
 ```
 
 | Router A       | routes traffic directly through ISP |
