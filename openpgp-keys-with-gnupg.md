@@ -347,6 +347,9 @@ required headers.
 printf './well-known/openpgpkey/hu/%s\n  Access-Control-Allow-Origin: *' "$WKD"
 ```
 
+Verify that WKD is configured properly by visiting this
+[WKD checker tool][wkd-verification].
+
 ## Key Maintenance
 
 ### Extend Expiration Date
@@ -370,7 +373,6 @@ The signature of the expiration date is attached to the public key.
 - <https://wiki.archlinux.org/index.php/GnuPG>
 - <https://wiki.debian.org/Subkeys>
 - <https://wiki.debian.org/GnuPG/AirgappedMasterKey>
-- <https://metacode.biz/openpgp/web-key-directory>
 - <https://datatracker.ietf.org/doc/html/draft-koch-openpgp-webkey-service>
 - <https://keys.openpgp.org/about/usage>
 - <https://crp.to/p>
@@ -381,3 +383,4 @@ The signature of the expiration date is attached to the public key.
 [luks-tails]: https://tails.boum.org/doc/encryption_and_privacy/encrypted_volumes/index.en.html
 [luks-encryption]: luks-encryption.md
 [ssh-agent]: https://wiki.archlinux.org/title/GnuPG#SSH_agent
+[wkd-verification]: https://metacode.biz/openpgp/web-key-directory
